@@ -8,19 +8,26 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #a2d149; /* verde bosque */
+    background: linear-gradient(to bottom, #6bbf59, #2e7d32);
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    color: #fff;
+  }
+  h1 {
+    margin-top: 20px;
+    text-shadow: 2px 2px 4px #000;
   }
   #game-area {
     position: relative;
     width: 600px;
     height: 400px;
-    background-color: #4a7c2b; /* tono más oscuro para suelo */
+    background-color: #4a7c2b;
     border-radius: 15px;
     margin-top: 20px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+    touch-action: none; /* Para que touch funcione bien */
   }
   #player {
     position: absolute;
@@ -31,51 +38,63 @@
     background-color: #f4a261;
     border-radius: 50%;
     border: 3px solid #e76f51;
+    box-shadow: 0 0 8px #f4a261;
+    transition: left 0.3s ease, bottom 0.3s ease;
   }
   .seed-pile {
     position: absolute;
     bottom: 60px;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background-color: #2a9d8f;
-    border: 2px solid #264653;
+    border: 3px solid #264653;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 22px;
+    color: #fff;
+    box-shadow: 0 0 6px #264653;
   }
   #pile1 {
     left: 200px;
   }
   #pile2 {
-    left: 260px;
+    left: 270px;
   }
   #question {
-    margin-top: 20px;
-    font-size: 20px;
+    margin-top: 25px;
+    font-size: 22px;
     font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+  }
+  #answers {
+    margin-top: 15px;
   }
   .answer-btn {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 18px;
+    margin: 8px 10px;
+    padding: 12px 25px;
+    font-size: 20px;
     cursor: pointer;
     border-radius: 8px;
     border: none;
     background-color: #e9c46a;
     color: #264653;
+    font-weight: bold;
     transition: background-color 0.3s;
+    min-width: 250px;
+    text-align: left;
   }
   .answer-btn:hover {
     background-color: #f4a261;
   }
   #result {
-    margin-top: 15px;
-    font-size: 22px;
+    margin-top: 20px;
+    font-size: 24px;
     font-weight: bold;
+    min-height: 30px;
+    text-shadow: 1px 1px 2px #000;
   }
 </style>
 </head>
@@ -88,22 +107,69 @@
   </div>
   <div id="question">¿Qué operación matemática representa esta situación?</div>
   <div id="answers">
-    <button class="answer-btn" onclick="checkAnswer('(2+3)*2')">(2 + 3) × 2</button>
-    <button class="answer-btn" onclick="checkAnswer('2+3*2')">2 + 3 × 2</button>
-    <button class="answer-btn" onclick="checkAnswer('2*(3+2)')">2 × (3 + 2)</button>
+    <button class="answer-btn" onclick="checkAnswer('a')">a) (2 + 3) × 2</button><br>
+    <button class="answer-btn" onclick="checkAnswer('b')">b) 2 + 3 × 2</button><br>
+    <button class="answer-btn" onclick="checkAnswer('c')">c) 2 × (3 + 2)</button><br>
+    <button class="answer-btn" onclick="checkAnswer('d')">d) (2 × 3) + 2</button><br>
   </div>
   <div id="result"></div>
 
 <script>
-  function checkAnswer(answer) {
-    const correct = '(2+3)*2';
+  const player = document.getElementById('player');
+  const gameArea = document.getElementById('game-area');
+
+  // Función para mover el jugador suavemente al clic/touch
+  function movePlayerTo(x, y) {
+    // Limitar la posición dentro del área del juego
+    const maxX = gameArea.clientWidth - player.clientWidth;
+    const maxY = gameArea.clientHeight - player.clientHeight;
+
+    // Ajustar para que la posición sea la esquina superior izquierda del jugador
+    let newX = x - player.clientWidth / 2;
+    let newY = y - player.clientHeight / 2;
+
+    // Limitar dentro de los bordes
+    if (newX < 0) newX = 0;
+    if (newX > maxX) newX = maxX;
+    if (newY < 0) newY = 0;
+    if (newY > maxY) newY = maxY;
+
+    // Como el jugador está posicionado con 'bottom' y 'left', para Y convertimos:
+    // bottom = altura del área - newY - altura jugador
+    const bottomValue = maxY - newY;
+
+    player.style.left = newX + 'px';
+    player.style.bottom = bottomValue + 'px';
+  }
+
+  // Evento para clic y touch dentro del área del juego
+  function onGameAreaClick(e) {
+    e.preventDefault();
+    let clickX, clickY;
+
+    if(e.type === 'touchstart') {
+      clickX = e.touches[0].clientX - gameArea.getBoundingClientRect().left;
+      clickY = e.touches[0].clientY - gameArea.getBoundingClientRect().top;
+    } else {
+      clickX = e.clientX - gameArea.getBoundingClientRect().left;
+      clickY = e.clientY - gameArea.getBoundingClientRect().top;
+    }
+    movePlayerTo(clickX, clickY);
+  }
+
+  gameArea.addEventListener('click', onGameAreaClick);
+  gameArea.addEventListener('touchstart', onGameAreaClick);
+
+  // Función para verificar respuesta
+  function checkAnswer(option) {
+    const correctOption = 'a';
     const resultDiv = document.getElementById('result');
-    if(answer === correct) {
+    if(option === correctOption) {
       resultDiv.textContent = '✅ ¡Correcto! Has entendido bien la operación.';
-      resultDiv.style.color = 'green';
+      resultDiv.style.color = 'lightgreen';
     } else {
       resultDiv.textContent = '❌ No es correcto, intenta de nuevo.';
-      resultDiv.style.color = 'red';
+      resultDiv.style.color = '#ff6666';
     }
   }
 </script>
