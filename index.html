@@ -1,18 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>No te estrelles (en los paréntesis)</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>No te estrelles (en los paréntesis) - Bosque</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #a2d149; /* verde bosque */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+  }
+  #game-area {
+    position: relative;
+    width: 600px;
+    height: 400px;
+    background-color: #4a7c2b; /* tono más oscuro para suelo */
+    border-radius: 15px;
+    margin-top: 20px;
+  }
+  #player {
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    width: 50px;
+    height: 50px;
+    background-color: #f4a261;
+    border-radius: 50%;
+    border: 3px solid #e76f51;
+  }
+  .seed-pile {
+    position: absolute;
+    bottom: 60px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #2a9d8f;
+    border: 2px solid #264653;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  #pile1 {
+    left: 200px;
+  }
+  #pile2 {
+    left: 260px;
+  }
+  #question {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .answer-btn {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    background-color: #e9c46a;
+    color: #264653;
+    transition: background-color 0.3s;
+  }
+  .answer-btn:hover {
+    background-color: #f4a261;
+  }
+  #result {
+    margin-top: 15px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+</style>
 </head>
 <body>
   <h1>🧠 No te estrelles (en los paréntesis)</h1>
-  <div id="game">
-    <p id="problem">¿Cuánto es (2 + 3) × 2?</p>
-    <input type="number" id="answer" placeholder="Tu respuesta...">
-    <button onclick="checkAnswer()">Responder</button>
-    <p id="result"></p>
+  <div id="game-area">
+    <div id="player" title="Tu personaje"></div>
+    <div id="pile1" class="seed-pile" title="Montón de 2 semillas">2</div>
+    <div id="pile2" class="seed-pile" title="Montón de 3 semillas">3</div>
   </div>
-  <script src="script.js"></script>
+  <div id="question">¿Qué operación matemática representa esta situación?</div>
+  <div id="answers">
+    <button class="answer-btn" onclick="checkAnswer('(2+3)*2')">(2 + 3) × 2</button>
+    <button class="answer-btn" onclick="checkAnswer('2+3*2')">2 + 3 × 2</button>
+    <button class="answer-btn" onclick="checkAnswer('2*(3+2)')">2 × (3 + 2)</button>
+  </div>
+  <div id="result"></div>
+
+<script>
+  function checkAnswer(answer) {
+    const correct = '(2+3)*2';
+    const resultDiv = document.getElementById('result');
+    if(answer === correct) {
+      resultDiv.textContent = '✅ ¡Correcto! Has entendido bien la operación.';
+      resultDiv.style.color = 'green';
+    } else {
+      resultDiv.textContent = '❌ No es correcto, intenta de nuevo.';
+      resultDiv.style.color = 'red';
+    }
+  }
+</script>
 </body>
 </html>
