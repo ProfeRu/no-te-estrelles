@@ -84,3 +84,40 @@ function showQuestion() {
   answersDiv.innerHTML = "";
 
   for (let key in question.options) {
+    const btn = document.createElement("button");
+    btn.className = "answer-btn";
+    btn.innerText = `${key}) ${question.options[key]}`;
+    btn.onclick = () => checkAnswer(key);
+    answersDiv.appendChild(btn);
+    answersDiv.appendChild(document.createElement("br"));
+  }
+
+  document.getElementById("result").textContent = "";
+}
+
+function checkAnswer(selectedOption) {
+  const correctOption = questions[currentLevel].correct;
+  const resultDiv = document.getElementById("result");
+
+  if (selectedOption === correctOption) {
+    resultDiv.textContent = "✅ ¡Correcto! Avanzando al siguiente nivel...";
+    resultDiv.style.color = "lightgreen";
+
+    setTimeout(() => {
+      currentLevel++;
+      if (currentLevel < questions.length) {
+        showQuestion();
+      } else {
+        document.getElementById("question").textContent = "🎉 ¡Felicidades! Has completado todos los niveles.";
+        document.getElementById("answers").innerHTML = "";
+        resultDiv.textContent = "👏 Puedes recargar la página para volver a jugar.";
+      }
+    }, 1500);
+  } else {
+    resultDiv.textContent = "❌ Esa no es la correcta. Intenta de nuevo.";
+    resultDiv.style.color = "#ff6666";
+  }
+}
+
+// Iniciar la primera pregunta al cargar
+showQuestion();
