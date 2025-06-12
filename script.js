@@ -1,4 +1,3 @@
-<script>
 // Lista de preguntas
 const questions = [
   {
@@ -41,7 +40,7 @@ function showQuestion() {
 
   // Mostrar las opciones
   const answersDiv = document.getElementById("answers");
-  answersDiv.innerHTML = ""; // Limpiar antes
+  answersDiv.innerHTML = "";
   for (let key in question.options) {
     const btn = document.createElement("button");
     btn.className = "answer-btn";
@@ -51,7 +50,6 @@ function showQuestion() {
     answersDiv.appendChild(document.createElement("br"));
   }
 
-  // Limpiar resultado anterior
   document.getElementById("result").textContent = "";
 }
 
@@ -72,13 +70,52 @@ function checkAnswer(selectedOption) {
         document.getElementById("answers").innerHTML = "";
         resultDiv.textContent = "👏 Puedes reiniciar para volver a jugar.";
       }
-    }, 1500); // esperar un momento antes de cambiar
+    }, 1500);
   } else {
     resultDiv.textContent = "❌ Esa no es la correcta. Intenta de nuevo.";
     resultDiv.style.color = "#ff6666";
   }
 }
 
+// Mover el personaje con clic o touch
+const player = document.getElementById('player');
+const gameArea = document.getElementById('game-area');
+
+function movePlayerTo(x, y) {
+  const maxX = gameArea.clientWidth - player.clientWidth;
+  const maxY = gameArea.clientHeight - player.clientHeight;
+
+  let newX = x - player.clientWidth / 2;
+  let newY = y - player.clientHeight / 2;
+
+  if (newX < 0) newX = 0;
+  if (newX > maxX) newX = maxX;
+  if (newY < 0) newY = 0;
+  if (newY > maxY) newY = maxY;
+
+  const bottomValue = maxY - newY;
+
+  player.style.left = newX + 'px';
+  player.style.bottom = bottomValue + 'px';
+}
+
+function onGameAreaClick(e) {
+  e.preventDefault();
+  let clickX, clickY;
+
+  if (e.type === 'touchstart') {
+    clickX = e.touches[0].clientX - gameArea.getBoundingClientRect().left;
+    clickY = e.touches[0].clientY - gameArea.getBoundingClientRect().top;
+  } else {
+    clickX = e.clientX - gameArea.getBoundingClientRect().left;
+    clickY = e.clientY - gameArea.getBoundingClientRect().top;
+  }
+
+  movePlayerTo(clickX, clickY);
+}
+
+gameArea.addEventListener('click', onGameAreaClick);
+gameArea.addEventListener('touchstart', onGameAreaClick);
+
 // Iniciar el juego
 showQuestion();
-</script>
