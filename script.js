@@ -74,7 +74,14 @@ const questions = [
   }
 ];
 
+const levelBackgrounds = [
+  "#4a7c2b",           // Nivel 1 - Verde pasto
+  "#2b5a7c",           // Nivel 2 - Bosque oscuro
+  "#7c3f2b"            // Nivel 3 - Bosque otoñal
+];
+
 let currentLevel = 0;
+gameArea.style.backgroundColor = levelBackgrounds[currentLevel];
 
 function showQuestion() {
   const question = questions[currentLevel];
