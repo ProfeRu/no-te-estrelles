@@ -114,64 +114,7 @@
   </div>
   <div id="result"></div>
 
-<script>
-  const player = document.getElementById('player');
-  const gameArea = document.getElementById('game-area');
 
-  // Función para mover el jugador suavemente al clic/touch
-  function movePlayerTo(x, y) {
-    // Limitar la posición dentro del área del juego
-    const maxX = gameArea.clientWidth - player.clientWidth;
-    const maxY = gameArea.clientHeight - player.clientHeight;
-
-    // Ajustar para que la posición sea la esquina superior izquierda del jugador
-    let newX = x - player.clientWidth / 2;
-    let newY = y - player.clientHeight / 2;
-
-    // Limitar dentro de los bordes
-    if (newX < 0) newX = 0;
-    if (newX > maxX) newX = maxX;
-    if (newY < 0) newY = 0;
-    if (newY > maxY) newY = maxY;
-
-    // Como el jugador está posicionado con 'bottom' y 'left', para Y convertimos:
-    // bottom = altura del área - newY - altura jugador
-    const bottomValue = maxY - newY;
-
-    player.style.left = newX + 'px';
-    player.style.bottom = bottomValue + 'px';
-  }
-
-  // Evento para clic y touch dentro del área del juego
-  function onGameAreaClick(e) {
-    e.preventDefault();
-    let clickX, clickY;
-
-    if(e.type === 'touchstart') {
-      clickX = e.touches[0].clientX - gameArea.getBoundingClientRect().left;
-      clickY = e.touches[0].clientY - gameArea.getBoundingClientRect().top;
-    } else {
-      clickX = e.clientX - gameArea.getBoundingClientRect().left;
-      clickY = e.clientY - gameArea.getBoundingClientRect().top;
-    }
-    movePlayerTo(clickX, clickY);
-  }
-
-  gameArea.addEventListener('click', onGameAreaClick);
-  gameArea.addEventListener('touchstart', onGameAreaClick);
-
-  // Función para verificar respuesta
-  function checkAnswer(option) {
-    const correctOption = 'a';
-    const resultDiv = document.getElementById('result');
-    if(option === correctOption) {
-      resultDiv.textContent = '✅ ¡Correcto! Has entendido bien la operación.';
-      resultDiv.style.color = 'lightgreen';
-    } else {
-      resultDiv.textContent = '❌ No es correcto, intenta de nuevo.';
-      resultDiv.style.color = '#ff6666';
-    }
-  }
 <script src="script.js"></script>
 </body>
 </html>
