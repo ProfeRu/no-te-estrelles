@@ -1,4 +1,46 @@
-// Lista de preguntas
+// ----------------- MOVIMIENTO DEL PERSONAJE -----------------
+
+const player = document.getElementById('player');
+const gameArea = document.getElementById('game-area');
+
+function movePlayerTo(x, y) {
+  const maxX = gameArea.clientWidth - player.clientWidth;
+  const maxY = gameArea.clientHeight - player.clientHeight;
+
+  let newX = x - player.clientWidth / 2;
+  let newY = y - player.clientHeight / 2;
+
+  newX = Math.max(0, Math.min(newX, maxX));
+  newY = Math.max(0, Math.min(newY, maxY));
+
+  const bottomValue = maxY - newY;
+  player.style.left = `${newX}px`;
+  player.style.bottom = `${bottomValue}px`;
+}
+
+function onGameAreaClick(e) {
+  e.preventDefault();
+  let clickX, clickY;
+
+  const rect = gameArea.getBoundingClientRect();
+
+  if (e.type === 'touchstart') {
+    clickX = e.touches[0].clientX - rect.left;
+    clickY = e.touches[0].clientY - rect.top;
+  } else {
+    clickX = e.clientX - rect.left;
+    clickY = e.clientY - rect.top;
+  }
+
+  movePlayerTo(clickX, clickY);
+}
+
+gameArea.addEventListener('click', onGameAreaClick);
+gameArea.addEventListener('touchstart', onGameAreaClick);
+
+
+// ----------------- PREGUNTAS Y NIVELES -----------------
+
 const questions = [
   {
     text: "¿Qué operación representa 2 montones de semillas (2 y 3) multiplicados por 2?",
@@ -38,84 +80,7 @@ function showQuestion() {
   const question = questions[currentLevel];
   document.getElementById("question").textContent = `Nivel ${currentLevel + 1}: ${question.text}`;
 
-  // Mostrar las opciones
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
+
   for (let key in question.options) {
-    const btn = document.createElement("button");
-    btn.className = "answer-btn";
-    btn.innerText = `${key}) ${question.options[key]}`;
-    btn.onclick = () => checkAnswer(key);
-    answersDiv.appendChild(btn);
-    answersDiv.appendChild(document.createElement("br"));
-  }
-
-  document.getElementById("result").textContent = "";
-}
-
-function checkAnswer(selectedOption) {
-  const correctOption = questions[currentLevel].correct;
-  const resultDiv = document.getElementById("result");
-
-  if (selectedOption === correctOption) {
-    resultDiv.textContent = "✅ ¡Correcto! Avanzando al siguiente nivel...";
-    resultDiv.style.color = "lightgreen";
-
-    setTimeout(() => {
-      currentLevel++;
-      if (currentLevel < questions.length) {
-        showQuestion();
-      } else {
-        document.getElementById("question").textContent = "🎉 ¡Felicidades! Has completado todos los niveles.";
-        document.getElementById("answers").innerHTML = "";
-        resultDiv.textContent = "👏 Puedes reiniciar para volver a jugar.";
-      }
-    }, 1500);
-  } else {
-    resultDiv.textContent = "❌ Esa no es la correcta. Intenta de nuevo.";
-    resultDiv.style.color = "#ff6666";
-  }
-}
-
-// Mover el personaje con clic o touch
-const player = document.getElementById('player');
-const gameArea = document.getElementById('game-area');
-
-function movePlayerTo(x, y) {
-  const maxX = gameArea.clientWidth - player.clientWidth;
-  const maxY = gameArea.clientHeight - player.clientHeight;
-
-  let newX = x - player.clientWidth / 2;
-  let newY = y - player.clientHeight / 2;
-
-  if (newX < 0) newX = 0;
-  if (newX > maxX) newX = maxX;
-  if (newY < 0) newY = 0;
-  if (newY > maxY) newY = maxY;
-
-  const bottomValue = maxY - newY;
-
-  player.style.left = newX + 'px';
-  player.style.bottom = bottomValue + 'px';
-}
-
-function onGameAreaClick(e) {
-  e.preventDefault();
-  let clickX, clickY;
-
-  if (e.type === 'touchstart') {
-    clickX = e.touches[0].clientX - gameArea.getBoundingClientRect().left;
-    clickY = e.touches[0].clientY - gameArea.getBoundingClientRect().top;
-  } else {
-    clickX = e.clientX - gameArea.getBoundingClientRect().left;
-    clickY = e.clientY - gameArea.getBoundingClientRect().top;
-  }
-
-  movePlayerTo(clickX, clickY);
-}
-
-gameArea.addEventListener('click', onGameAreaClick);
-gameArea.addEventListener('touchstart', onGameAreaClick);
-
-// Iniciar el juego
-showQuestion();
